@@ -27,3 +27,26 @@ Migrate data from Actual Budget (https://actualbudget.com/) to Bagels. It transf
 ```bash
 bagels --migrate actualbudget --source "path/to/actualbudget/db.sqlite"
 ```
+
+# Ledger to Bagels Migration
+
+Migrate data from Ledger (<https://ledger-cli.org>) to Bagels. It transfers your accounts, categories, and transactions while preserving their relationships and attributes.
+
+## Rules
+
+- Transactions without categories in Ledger will be assigned to an "Uncategorized" category in Bagels
+
+## Steps to Migrate
+
+1. Export Your Ledger Data:
+
+- Open Ledger
+- Navigate to More → Settings → Export Data
+- Save and extract the zip file
+- Locate the `db.sqlite` file in the extracted contents
+
+2. Run the Migration:
+
+```bash
+bagels --migrate ledger --source "path/to/ledger/csv"
+```

@@ -22,7 +22,7 @@ from bagels.versioning import get_current_version, get_pypi_version, needs_updat
 )
 @click.option(
     "--migrate",
-    type=click.Choice(["actualbudget"]),
+    type=click.Choice(["actualbudget", "ledger"]),
     help="Specify the migration type.",
 )
 @click.option(
@@ -53,6 +53,22 @@ def cli(ctx, at: Path | None, migrate: str | None, source: Path | None):
                 )
 
                 migrator = BudgetToBagelsMigration(str(source), str(database_file()))
+                migrator.migrate()
+                click.echo(click.style("Migration completed successfully!", fg="green"))
+                return
+            except Exception as e:
+                click.echo(click.style(f"Migration failed: {str(e)}", fg="red"))
+                ctx.exit(1)
+        elif migrate == "ledger":
+            try:
+                click.echo(f"Starting migration from {source}")
+                from bagels.models.database.app import init_db
+
+                init_db()
+
+                from bagels.migrations.migrate_ledger import LedgerToBagelsMigration
+
+                migrator = LedgerToBagelsMigration(str(source), str(database_file()))
                 migrator.migrate()
                 click.echo(click.style("Migration completed successfully!", fg="green"))
                 return
